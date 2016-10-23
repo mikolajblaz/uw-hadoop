@@ -27,7 +27,7 @@ public class Minhashing {
 
         Map<String, Set<Integer>> mat = createShinglesMatrix(files);
         // matrix 'mat' is ready now
-
+        LSH lsh = new LSH(mat);
 
     }
 
