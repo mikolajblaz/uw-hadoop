@@ -10,10 +10,11 @@ public class ShinglesCount {
     private String lastLineEnd = null;
 
     private int shingleLength = 4;
-    private int tokenLength = 4;
+    private int tokenLength = 0;
     private boolean nonASCII = true;
 
     private Set<String> shingles = new HashSet<>();
+    private Set<String> Tokens = new HashSet<>();
 
     public ShinglesCount() {};
 
@@ -42,6 +43,19 @@ public class ShinglesCount {
         } else {
             extractShingles(lastLineEnd + line);
         }
+    }
+
+    /** Convert shingles to tokens. */
+    public void convertToTokens(int tokenLength) {
+
+    }
+
+
+    /** After file reading is done, this method should be called. */
+    public void finishReading() {
+        if (tokenLength > 0)
+            convertToTokens();
+        printStatistics();
     }
 
 
