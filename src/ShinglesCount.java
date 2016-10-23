@@ -26,10 +26,23 @@ public class ShinglesCount {
     private Set<String> shingles = new HashSet<>();
     private Set<Integer> tokens = new HashSet<>();
 
+
+    public ShinglesCount(int shingleLength, int tokenLength) {
+        this(shingleLength, tokenLength, false);
+    }
+
     public ShinglesCount(int shingleLength, int tokenLength, boolean onlyASCII) {
         this.shingleLength = shingleLength;
         this.tokenLength = tokenLength;
         this.onlyASCII = onlyASCII;
+    }
+
+    public Set<Integer> getTokens() {
+        return tokens;
+    }
+
+    public Set<String> getShingles() {
+        return shingles;
     }
 
     public int countShingles(String filepath, FileSystem fs) throws IOException {

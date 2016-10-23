@@ -20,13 +20,12 @@ public class ShinglesSummary {
         FileSystem fs = FileSystem.get(conf);
 
         int count;
-        ShinglesCount sc;
 
         System.out.println("Shingles\tno tokens\t2b tokens\t3b tokens \t4b tokens");
         for (int sl = 2; sl < 11; sl++) {
             System.out.print(Integer.toString(sl) + "\t\t");
             for (int tl : new int[] {0, 2, 3, 4}) {
-                count = new ShinglesCount(sl, tl, false).countShingles(filepath, fs);
+                count = new ShinglesCount(sl, tl).countShingles(filepath, fs);
                 System.out.printf("%-16d", count);
             }
             System.out.println();
