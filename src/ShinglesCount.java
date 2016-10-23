@@ -1,3 +1,11 @@
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IOUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +30,29 @@ public class ShinglesCount {
         this.shingleLength = shingleLength;
         this.tokenLength = tokenLength;
         this.onlyASCII = onlyASCII;
+    }
+
+    public int countShingles(String filepath, FileSystem fs) throws IOException {
+        BufferedReader br;
+        String line;
+        FSDataInputStream input = null;
+
+        Path inputFile = new Path(filepath);
+
+        try {
+            input = fs.open(inputFile);
+            br = new BufferedReader(new InputStreamReader(input));
+
+            while ((line = br.readLine()) != null) {
+                processLine(line);
+            }
+
+        } finally {
+            IOUtils.closeStream(input);
+        }
+
+        /* Print results. */
+        return getTotal();
     }
 
     public void processLine(String line) {

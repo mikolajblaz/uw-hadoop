@@ -11,25 +11,22 @@ import java.io.*;
  */
 
 public class ShinglesSummary {
-    private static FileSystem fs;
-    private static Path inputFile;
-
     public static void main(String[] args) throws IOException {
-        inputFile = new Path("/input/book1.txt");
-        if (args.length == 1) {
-            inputFile = new Path(args[0]);
-        }
+        String filepath = "/input/book1.txt";
+        if (args.length == 1)
+            filepath = args[0];
 
         Configuration conf = new Configuration();
-        fs = FileSystem.get(conf);
+        FileSystem fs = FileSystem.get(conf);
 
         int count;
+        ShinglesCount sc;
 
         System.out.println("Shingles\tno tokens\t2b tokens\t3b tokens \t4b tokens");
         for (int sl = 2; sl < 11; sl++) {
             System.out.print(Integer.toString(sl) + "\t\t");
             for (int tl : new int[] {0, 2, 3, 4}) {
-                count = process_file(sl, tl, false);
+                count = new ShinglesCount(sl, tl, false).countShingles(filepath, fs);
                 System.out.printf("%-16d", count);
             }
             System.out.println();
@@ -40,33 +37,10 @@ public class ShinglesSummary {
         for (int sl = 2; sl < 11; sl++) {
             System.out.print(Integer.toString(sl) + "\t\t");
             for (int tl : new int[] {0, 2, 3, 4}) {
-                count = process_file(sl, tl, true);
+                count = new ShinglesCount(sl, tl, true).countShingles(filepath, fs);
                 System.out.printf("%-16d", count);
             }
             System.out.println();
         }
-    }
-
-    private static int process_file(int shingleLength, int tokenLength, boolean onlyASCII) throws IOException {
-        BufferedReader br;
-        String line;
-        FSDataInputStream input = null;
-
-        ShinglesCount sc = new ShinglesCount(shingleLength, tokenLength, onlyASCII);
-
-        try {
-            input = fs.open(inputFile);
-            br = new BufferedReader(new InputStreamReader(input));
-
-            while ((line = br.readLine()) != null) {
-                sc.processLine(line);
-            }
-
-        } finally {
-            IOUtils.closeStream(input);
-        }
-
-        /* Print results. */
-        return sc.getTotal();
     }
 }
