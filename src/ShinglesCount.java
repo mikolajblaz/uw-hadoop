@@ -18,11 +18,6 @@ public class ShinglesCount {
     private Set<String> shingles = new HashSet<>();
     private Set<Integer> tokens = new HashSet<>();
 
-    public ShinglesCount(int shingleLength, int tokenLength) {
-        this.shingleLength = shingleLength;
-        this.tokenLength = tokenLength;
-    }
-
     public ShinglesCount(int shingleLength, int tokenLength, boolean onlyASCII) {
         this.shingleLength = shingleLength;
         this.tokenLength = tokenLength;

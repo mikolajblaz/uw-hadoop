@@ -10,7 +10,7 @@ import java.io.*;
  * Created by Mikołaj Błaż on 17.10.16.
  */
 
-public class Controller {
+public class ShinglesSummary {
     private static FileSystem fs;
     private static Path inputFile;
 
