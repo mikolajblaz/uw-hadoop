@@ -12,6 +12,9 @@ public class ShinglesCount {
     private final int tokenLength;
     private boolean onlyASCII = true;
 
+    private final int twoMask = 0x0000ffff;
+    private final int threeMask = 0x00ffffff;
+
     private Set<String> shingles = new HashSet<>();
     private Set<Integer> tokens = new HashSet<>();
 
@@ -38,35 +41,12 @@ public class ShinglesCount {
         }
     }
 
-    /** After file reading is done, this method should be called. */
-    public void finishReading() {
-        if (tokenLength > 0)
-            convertToTokens();
-    }
-
     public int getTotal() {
         if (tokenLength > 0)
             return tokens.size();
         else
             return shingles.size();
     }
-
-    /** Convert shingles to tokens. */
-    private void convertToTokens() {
-        final int twoMask = 0x0000ffff;
-        final int threeMask = 0x00ffffff;
-
-        int hash;
-        for (String sh : shingles) {
-            hash = sh.hashCode();
-            if (tokenLength == 2)
-                hash &= twoMask;
-            else if (tokenLength == 3)
-                hash &= threeMask;
-            tokens.add(hash);
-        }
-    }
-
 
     /** Print statistics. */
     private void printStatistics() {
@@ -83,19 +63,23 @@ public class ShinglesCount {
 
     /** Extract shingles and save unused characters from line end. */
     private void extractShingles(String line) {
-        extractShingles(line, shingleLength);
-    }
-
-    /** Extract shingles and save unused characters from line end. */
-    private void extractShingles(String line, int shingleLength) {
         final int lineLength = line.length();
         for (int i = 0; i < lineLength - shingleLength + 1; i++) {
-            shingles.add(line.substring(i, i + shingleLength));
+            addShingle(line.substring(i, i + shingleLength));
         }
         if (lineLength > shingleLength - 1) {
             lastLineEnd = line.substring(lineLength - shingleLength + 1);
         } else {
             lastLineEnd = line;
+        }
+    }
+
+    private void addShingle(String sh) {
+        switch (tokenLength) {
+            case 0: shingles.add(sh); break;
+            case 2: tokens.add(sh.hashCode() & twoMask);
+            case 3: tokens.add(sh.hashCode() & threeMask);
+            case 4: tokens.add(sh.hashCode());
         }
     }
 

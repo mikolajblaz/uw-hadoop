@@ -15,7 +15,7 @@ public class Controller {
     private static Path inputFile;
 
     public static void main(String[] args) throws IOException {
-        inputFile = new Path("/user/mikib/input/hel.txt");
+        inputFile = new Path("/input/book1.txt");
         if (args.length == 1) {
             inputFile = new Path(args[0]);
         }
@@ -67,7 +67,6 @@ public class Controller {
         }
 
         /* Print results. */
-        sc.finishReading();
         return sc.getTotal();
     }
 }
