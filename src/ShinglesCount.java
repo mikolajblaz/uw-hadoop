@@ -11,15 +11,15 @@ public class ShinglesCount {
 
     private int shingleLength = 4;
     private int tokenLength = 0;
-    private boolean nonASCII = true;
+    private boolean onlyASCII = true;
 
     private Set<String> shingles = new HashSet<>();
     private Set<String> Tokens = new HashSet<>();
 
     public ShinglesCount() {};
 
-    public ShinglesCount(boolean nonASCII) {
-        this.nonASCII = nonASCII;
+    public ShinglesCount(boolean onlyASCII) {
+        this.onlyASCII = onlyASCII;
     }
 
     public ShinglesCount(int shingleLength, int tokenLength) {
@@ -27,15 +27,15 @@ public class ShinglesCount {
         this.tokenLength = tokenLength;
     }
 
-    public ShinglesCount(int shingleLength, int tokenLength, boolean noASCII) {
+    public ShinglesCount(int shingleLength, int tokenLength, boolean onlyASCII) {
         this.shingleLength = shingleLength;
         this.tokenLength = tokenLength;
-        this.nonASCII = noASCII;
+        this.onlyASCII = onlyASCII;
     }
 
     public void processLine(String line) {
         line = line.toLowerCase();
-        if (!nonASCII) {
+        if (onlyASCII) {
             line = line.replaceAll("[^\\x00-\\x7F]", "");
         }
         if (lastLineEnd == null) {
@@ -46,7 +46,7 @@ public class ShinglesCount {
     }
 
     /** Convert shingles to tokens. */
-    public void convertToTokens(int tokenLength) {
+    public void convertToTokens() {
 
     }
 
@@ -61,20 +61,13 @@ public class ShinglesCount {
 
     /** Print statistics. */
     public void printStatistics() {
-        System.out.print("Total shingles: ");
-        System.out.println(shingles.size());
-    }
-
-
-    /** Print all shingles */
-    private void outputShingles() {
-        System.out.println("Shingles:");
-        for (String sh : shingles) {
-            System.out.println(sh);
+        System.out.print("Total count:" + Integer.toString(shingles.size()));
+        System.out.print("; shingles length: " + Integer.toString(shingleLength));
+        if (tokenLength > 0) {
+            System.out.print(", token length: " + Integer.toString(tokenLength));
         }
+        System.out.println();
     }
-
-
 
     /** Extract shingles and save unused characters from line end. */
     private void extractShingles(String line) {
@@ -91,6 +84,14 @@ public class ShinglesCount {
             lastLineEnd = line.substring(lineLength - shingleLength + 1);
         } else {
             lastLineEnd = line;
+        }
+    }
+
+    /** Print all shingles */
+    private void outputShingles() {
+        System.out.println("Shingles:");
+        for (String sh : shingles) {
+            System.out.println(sh);
         }
     }
 }
