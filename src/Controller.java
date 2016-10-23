@@ -23,21 +23,31 @@ public class Controller {
         Configuration conf = new Configuration();
         fs = FileSystem.get(conf);
 
+        int count;
+
+        System.out.println("Shingles\tno tokens\t2b tokens\t3b tokens \t4b tokens");
         for (int sl = 2; sl < 11; sl++) {
+            System.out.print(Integer.toString(sl) + "\t\t");
             for (int tl : new int[] {0, 2, 3, 4}) {
-                process_file(sl, tl, false);
+                count = process_file(sl, tl, false);
+                System.out.printf("%-16d", count);
             }
+            System.out.println();
         }
 
-        System.out.println("ASCII only:");
+        System.out.println("\n\n############################\nASCII only:");
+        System.out.println("Shingles\tno tokens\t2b tokens\t3b tokens \t4b tokens");
         for (int sl = 2; sl < 11; sl++) {
+            System.out.print(Integer.toString(sl) + "\t\t");
             for (int tl : new int[] {0, 2, 3, 4}) {
-                process_file(sl, tl, false);
+                count = process_file(sl, tl, true);
+                System.out.printf("%-16d", count);
             }
+            System.out.println();
         }
     }
 
-    private static void process_file(int shingleLength, int tokenLength, boolean onlyASCII) throws IOException {
+    private static int process_file(int shingleLength, int tokenLength, boolean onlyASCII) throws IOException {
         BufferedReader br;
         String line;
         FSDataInputStream input = null;
@@ -57,7 +67,7 @@ public class Controller {
         }
 
         /* Print results. */
-        sc.printStatistics();
-
+        sc.finishReading();
+        return sc.getTotal();
     }
 }

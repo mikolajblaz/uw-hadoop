@@ -6,21 +6,14 @@ import java.util.Set;
  */
 
 public class ShinglesCount {
-    private String line;
     private String lastLineEnd = null;
 
-    private int shingleLength = 4;
-    private int tokenLength = 0;
+    private final int shingleLength;
+    private final int tokenLength;
     private boolean onlyASCII = true;
 
     private Set<String> shingles = new HashSet<>();
-    private Set<String> Tokens = new HashSet<>();
-
-    public ShinglesCount() {};
-
-    public ShinglesCount(boolean onlyASCII) {
-        this.onlyASCII = onlyASCII;
-    }
+    private Set<Integer> tokens = new HashSet<>();
 
     public ShinglesCount(int shingleLength, int tokenLength) {
         this.shingleLength = shingleLength;
@@ -45,28 +38,47 @@ public class ShinglesCount {
         }
     }
 
-    /** Convert shingles to tokens. */
-    public void convertToTokens() {
-
-    }
-
-
     /** After file reading is done, this method should be called. */
     public void finishReading() {
         if (tokenLength > 0)
             convertToTokens();
-        printStatistics();
+    }
+
+    public int getTotal() {
+        if (tokenLength > 0)
+            return tokens.size();
+        else
+            return shingles.size();
+    }
+
+    /** Convert shingles to tokens. */
+    private void convertToTokens() {
+        final int twoMask = 0x0000ffff;
+        final int threeMask = 0x00ffffff;
+
+        int hash;
+        for (String sh : shingles) {
+            hash = sh.hashCode();
+            if (tokenLength == 2)
+                hash &= twoMask;
+            else if (tokenLength == 3)
+                hash &= threeMask;
+            tokens.add(hash);
+        }
     }
 
 
     /** Print statistics. */
-    public void printStatistics() {
+    private void printStatistics() {
         System.out.print("Total count:" + Integer.toString(shingles.size()));
+        System.out.println("; shingles length: " + Integer.toString(shingleLength));
+    }
+
+    /** Print statistics. */
+    private void printTokenStatistics() {
+        System.out.print("Total count:" + Integer.toString(tokens.size()));
         System.out.print("; shingles length: " + Integer.toString(shingleLength));
-        if (tokenLength > 0) {
-            System.out.print(", token length: " + Integer.toString(tokenLength));
-        }
-        System.out.println();
+        System.out.println(", token length: " + Integer.toString(tokenLength));
     }
 
     /** Extract shingles and save unused characters from line end. */
