@@ -1,8 +1,14 @@
 import javafx.util.Pair;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IOUtils;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -16,6 +22,7 @@ public class LSH {
     private final int documentsCount;
 
     private FileSystem fs;
+    private Configuration conf;
     private Path[] files;
     private Path outputDir;
 
@@ -25,9 +32,10 @@ public class LSH {
     private Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
     private List<Pair<Integer, Integer>> candidatePairs = new LinkedList<>();
 
-    LSH(Path[] files, FileSystem fs, Path outputDir) {
+    LSH(Path[] files, FileSystem fs, Configuration conf, Path outputDir) {
         this.files = files;
         this.fs = fs;
+        this.conf = conf;
         this.outputDir = outputDir;
         this.documentsCount = files.length;
         this.signs = new int[documentsCount][SIGN_LEN];
@@ -128,8 +136,12 @@ public class LSH {
         buckets.clear();
     }
 
-    private void saveMatrix() {
-
+    private void saveMatrix() throws IOException {
+        String text = "Hello hello";
+        InputStream in = new BufferedInputStream(new ByteArrayInputStream(text.getBytes()));
+        Path outputPath = new Path(outputDir, "matrix");
+        FSDataOutputStream out = fs.create(outputPath);
+        IOUtils.copyBytes(in, out, conf);
     }
 
     private void saveSignatures() {

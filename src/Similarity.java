@@ -29,7 +29,7 @@ public class Similarity {
             System.out.println(filenames[i]);
         }
 
-        LSH lsh = new LSH(files, fs, outputDir);
+        LSH lsh = new LSH(files, fs, conf, outputDir);
         List<Pair<Integer, Integer>> pairs = lsh.doLSH(true);
 
         System.out.println("Candidate pairs:");
