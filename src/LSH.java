@@ -1,5 +1,6 @@
 import javafx.util.Pair;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
 import java.util.*;
@@ -8,14 +9,15 @@ import java.util.*;
  * Created by mikib on 23.10.16.
  */
 public class LSH {
-    private final int SIGN_LEN = 100;
     private final int bands = 5;
     private final int rows = 20;
+    private final int SIGN_LEN = bands * rows;
     private final int bucketsCnt = 1000000;
     private final int documentsCount;
 
     private FileSystem fs;
-    private String[] files;
+    private Path[] files;
+    private Path outputDir;
 
     /* Succesive steps: */
     private Map<String, Set<Integer>> matrix = new HashMap<>();
@@ -23,23 +25,33 @@ public class LSH {
     private Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
     private List<Pair<Integer, Integer>> candidatePairs = new LinkedList<>();
 
-    LSH(String[] files, FileSystem fs) {
+    LSH(Path[] files, FileSystem fs, Path outputDir) {
         this.files = files;
         this.fs = fs;
+        this.outputDir = outputDir;
         this.documentsCount = files.length;
         this.signs = new int[documentsCount][SIGN_LEN];
     }
 
     public List<Pair<Integer, Integer>> doLSH(boolean reset) throws IOException {
+        System.out.println("Init");
         createShinglesMatrix();
+        System.out.println("Shingles done");
+        saveMatrix();
+        System.out.println("Saving done");
         generateSignatures();
+        System.out.println("Signatures done");
         if (reset)
             matrix = null;  // free memory
+        saveSignatures();
+        System.out.println("Saving done");
         hashToBuckets();
+        System.out.println("Buckets done");
         if (reset) {
             signs = null;  // free memory
             buckets = null;
         }
+        System.out.println("LSH done");
         return candidatePairs;
     }
 
@@ -114,6 +126,14 @@ public class LSH {
             }
         }
         buckets.clear();
+    }
+
+    private void saveMatrix() {
+
+    }
+
+    private void saveSignatures() {
+
     }
 
     private int[][] generateHashParams() {

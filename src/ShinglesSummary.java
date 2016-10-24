@@ -12,9 +12,9 @@ import java.io.*;
 
 public class ShinglesSummary {
     public static void main(String[] args) throws IOException {
-        String filepath = "/input/book1.txt";
+        Path filepath = new Path("/input/book1.txt");
         if (args.length == 1)
-            filepath = args[0];
+            filepath = new Path(args[0]);
 
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);

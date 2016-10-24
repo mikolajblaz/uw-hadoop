@@ -45,12 +45,12 @@ public class ShinglesCount {
         return shingles;
     }
 
-    public int countShingles(String filepath, FileSystem fs) throws IOException {
+    public int countShingles(Path filepath, FileSystem fs) throws IOException {
         BufferedReader br;
         String line;
         FSDataInputStream input = null;
 
-        Path inputFile = new Path(filepath);
+        Path inputFile = filepath;
 
         try {
             input = fs.open(inputFile);
