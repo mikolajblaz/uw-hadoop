@@ -27,7 +27,9 @@ public class Minhashing {
 
         Map<String, Set<Integer>> mat = createShinglesMatrix(files);
         // matrix 'mat' is ready now
-        LSH lsh = new LSH(mat);
+        LSH lsh = new LSH(mat, files.length);
+        int[][] signs = lsh.generateSignatures();
+        // signs is a matrix [docsCount][100] now
 
     }
 
