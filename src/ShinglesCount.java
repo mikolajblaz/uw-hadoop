@@ -116,17 +116,24 @@ public class ShinglesCount {
     private void addShingle(String sh) {
         switch (tokenLength) {
             case 0: shingles.add(sh); break;
-            case 2: tokens.add(sh.hashCode() & twoMask);
-            case 3: tokens.add(sh.hashCode() & threeMask);
-            case 4: tokens.add(sh.hashCode());
+            case 2: tokens.add(sh.hashCode() & twoMask); break;
+            case 3: tokens.add(sh.hashCode() & threeMask); break;
+            case 4: tokens.add(sh.hashCode()); break;
         }
     }
 
     /** Print all shingles */
-    private void outputShingles() {
-        System.out.println("Shingles:");
-        for (String sh : shingles) {
-            System.out.println(sh);
+    public void outputShingles() {
+        if (tokenLength == 0) {
+            System.out.println("Shingles:");
+            for (String sh : shingles) {
+                System.out.println(sh);
+            }
+        } else {
+            System.out.println("Tokens:");
+            for (int sh : tokens) {
+                System.out.println(Integer.toString(sh));
+            }
         }
     }
 }
