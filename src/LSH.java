@@ -44,13 +44,13 @@ public class LSH {
         createShinglesMatrix();
         System.out.println("Shingles done");
         saveMatrix();
-        System.out.println("Saving done");
+        System.out.println("Matrix saving done");
         generateSignatures();
         System.out.println("Signatures done");
         if (reset)
             matrix = null;  // free memory
         saveSignatures();
-        System.out.println("Saving done");
+        System.out.println("Signatures saving done");
         hashToBuckets();
         System.out.println("Buckets done");
         if (reset) {
@@ -163,8 +163,24 @@ public class LSH {
         output.close();
     }
 
-    private void saveSignatures() {
+    private void saveSignatures() throws IOException {
+        Path outputPath = new Path(outputDir, "signatures");
+        FSDataOutputStream out = fs.create(outputPath);
+        BufferedOutputStream output = new BufferedOutputStream(out);
 
+        StringBuilder str;
+
+        for (int s = 0; s < SIGN_LEN; s++) {
+            str = new StringBuilder("");
+            for (int doc = 0; doc < documentsCount; doc++) {
+                str.append(String.format("%-12d", signs[doc][s]));
+            }
+            str.append('\n');
+            output.write(str.toString().getBytes());
+            output.flush();
+        }
+
+        output.close();
     }
 
     private int[][] generateHashParams() {
@@ -190,9 +206,9 @@ public class LSH {
     private int hashInt(int value, int p, int q) {
         // TODO: quick power
         for (int i = 0; i < p; i++) {
-            value = (value * p) % q;
+            value = ((value + 31) * p) % q;
         }
-        return value;
+        return Math.abs(value);
     }
 
     /* Similair to hashCode String implementation. */
