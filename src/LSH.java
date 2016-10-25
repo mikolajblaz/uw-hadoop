@@ -1,14 +1,12 @@
 import javafx.util.Pair;
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -144,11 +142,25 @@ public class LSH {
     }
 
     private void saveMatrix() throws IOException {
-        String text = "Hello hello";
-        InputStream in = new BufferedInputStream(new ByteArrayInputStream(text.getBytes()));
         Path outputPath = new Path(outputDir, "matrix");
         FSDataOutputStream out = fs.create(outputPath);
-        IOUtils.copyBytes(in, out, conf);
+        BufferedOutputStream output = new BufferedOutputStream(out);
+
+        StringBuilder str;
+        Set<Integer> set;
+
+        for (Map.Entry<String, Set<Integer>> pair : matrix.entrySet()) {
+            set = pair.getValue();
+            str = new StringBuilder(pair.getKey() + '\t');
+            for (int i = 0; i < documentsCount; i++) {
+                str.append(set.contains(i) ? '1' : '0');
+            }
+            str.append('\n');
+            output.write(str.toString().getBytes());
+            output.flush();
+        }
+
+        output.close();
     }
 
     private void saveSignatures() {
