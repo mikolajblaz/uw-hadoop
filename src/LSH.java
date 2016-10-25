@@ -204,11 +204,14 @@ public class LSH {
     }
 
     private int hashInt(int value, int p, int q) {
-        // TODO: quick power
-        for (int i = 0; i < p; i++) {
-            value = ((value + 31) * p) % q;
-        }
-        return Math.abs(value);
+        return hash((hash(value) + p) * q);
+    }
+
+    private int hash(int x) {
+        x = ((x >> 16) ^ x) * 0x45d9f3b;
+        x = ((x >> 16) ^ x) * 0x45d9f3b;
+        x = (x >> 16) ^ x;
+        return x;
     }
 
     /* Similair to hashCode String implementation. */
