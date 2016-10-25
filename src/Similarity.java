@@ -30,7 +30,7 @@ public class Similarity {
         }
 
         LSH lsh = new LSH(files, fs, conf, outputDir);
-        List<Pair<Integer, Integer>> pairs = lsh.doLSH(true);
+        Set<Pair<Integer, Integer>> pairs = lsh.doLSH(true);
 
         System.out.println("Candidate pairs:");
         for (Pair<Integer, Integer> p : pairs) {

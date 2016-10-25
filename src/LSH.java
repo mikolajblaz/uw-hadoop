@@ -30,7 +30,7 @@ public class LSH {
     private Map<String, Set<Integer>> matrix = new HashMap<>();
     private int[][] signs;
     private Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
-    private List<Pair<Integer, Integer>> candidatePairs = new LinkedList<>();
+    private Set<Pair<Integer, Integer>> candidatePairs = new HashSet<>();
 
     LSH(Path[] files, FileSystem fs, Configuration conf, Path outputDir) {
         this.files = files;
@@ -41,7 +41,7 @@ public class LSH {
         this.signs = new int[documentsCount][SIGN_LEN];
     }
 
-    public List<Pair<Integer, Integer>> doLSH(boolean reset) throws IOException {
+    public Set<Pair<Integer, Integer>> doLSH(boolean reset) throws IOException {
         System.out.println("Init");
         createShinglesMatrix();
         System.out.println("Shingles done");
@@ -122,13 +122,20 @@ public class LSH {
     }
 
     private void clearBuckets() {
+        int n, m;
         for (ArrayList<Integer> b : buckets.values()) {
             if (b.size() > 1) {
                 final int bSize = b.size();
                 // add pairs
                 for (int i = 0; i < bSize - 1; i++) {
                     for (int j = i + 1; j < bSize; j++) {
-                        candidatePairs.add(new Pair<>(b.get(i), b.get(j)));
+                        n = b.get(i);
+                        m = b.get(j);
+                        // add sorted
+                        if (n < m)
+                            candidatePairs.add(new Pair<>(n, m));
+                        else
+                            candidatePairs.add(new Pair<>(m, n));
                     }
                 }
             }
