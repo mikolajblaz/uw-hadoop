@@ -22,23 +22,29 @@ public class Similarity {
         Path[] files = new Path[inputFiles.length];
         String[] filenames = new String[inputFiles.length];
 
+        System.out.println("Files read:");
         for (int i = 0; i < inputFiles.length; i++) {
             files[i] = inputFiles[i].getPath();
             filenames[i] = files[i].getName();
             System.out.println(filenames[i]);
         }
 
-        LSH lsh = new LSH(files, fs, conf, outputDir);
+        System.out.println("\n\n############## Shingles version ###############");
+        printCandidates(new LSH(outputDir, files, fs, conf, false), filenames); // shingles
+        System.out.println("\n\n############### Tokens version ###############");
+        printCandidates(new LSH(outputDir, files, fs, conf, true), filenames);  // tokens
+    }
+
+    public static void printCandidates(LSH lsh, String[] filenames) throws IOException {
+
         Set<Pair> pairs = lsh.doLSH(true);
 
         System.out.println("Candidate pairs:");
         for (Pair p : pairs) {
             System.out.println("(" + filenames[p.a] + ", " + filenames[p.b] + ")");
         }
-        System.out.println("\nTotal: " + Integer.toString(pairs.size()));
+        System.out.println("\nTotal pairs found: " + Integer.toString(pairs.size()));
     }
-
-
 
 
 

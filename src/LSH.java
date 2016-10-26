@@ -1,9 +1,7 @@
-import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
 
 import java.io.*;
 import java.util.*;
@@ -17,6 +15,7 @@ public class LSH {
     private final int SIGN_LEN = bands * rows;
     private final int bucketsCnt = 1000000;
     private final int documentsCount;
+    private boolean useTokens;
 
     private FileSystem fs;
     private Configuration conf;
@@ -25,37 +24,54 @@ public class LSH {
 
     /* Succesive steps: */
     private Map<String, Set<Integer>> matrix = new HashMap<>();
+    private Map<Integer, Set<Integer>> matrixTokens = new HashMap<>();
     private int[][] signs;
     private Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
     private Set<Pair> candidatePairs = new HashSet<>();
 
-    LSH(Path[] files, FileSystem fs, Configuration conf, Path outputDir) {
+    LSH(Path outputDir, Path[] files, FileSystem fs, Configuration conf, boolean useTokens) {
         this.files = files;
         this.fs = fs;
         this.conf = conf;
         this.outputDir = outputDir;
         this.documentsCount = files.length;
         this.signs = new int[documentsCount][SIGN_LEN];
+        this.useTokens = useTokens;
     }
 
     public Set<Pair> doLSH(boolean reset) throws IOException {
         System.out.println("Init");
-        createShinglesMatrix();
-        System.out.println("Shingles done");
-        saveMatrix();
-        System.out.println("Matrix saving done");
+        if (useTokens) {
+            createTokensMatrix();
+            System.out.println("Tokens done");
+            saveMatrixTokens();
+            System.out.println("Matrix saving done");
+        } else {    // use shingles
+            createShinglesMatrix();
+            System.out.println("Shingles done");
+            saveMatrix();
+            System.out.println("Matrix saving done");
+        }
+
         generateSignatures();
         System.out.println("Signatures done");
-        if (reset)
+
+        if (reset) {
             matrix = null;  // free memory
+            matrixTokens = null;
+        }
+
         saveSignatures();
         System.out.println("Signatures saving done");
+
         hashToBuckets();
         System.out.println("Buckets done");
+
         if (reset) {
             signs = null;  // free memory
             buckets = null;
         }
+
         System.out.println("LSH done");
         return candidatePairs;
     }
@@ -81,6 +97,27 @@ public class LSH {
         }
     }
 
+    /* Step 1 - token version */
+    private void createTokensMatrix() throws IOException {
+        ShinglesCount sc;
+        Set<Integer> tokens;
+
+        /* m<t, d> - token 't' is in documents 'd' */
+        Set<Integer> tokSet;
+
+        for (int i = 0; i < documentsCount; i++) {
+            sc = new ShinglesCount(10, 4);
+            sc.countShingles(files[i], fs);
+            tokens = sc.getTokens();
+            for (Integer tok : tokens) {
+                if (!matrixTokens.containsKey(tok))
+                    matrixTokens.put(tok, new HashSet<Integer>());
+                tokSet = matrixTokens.get(tok);
+                tokSet.add(i);   // token 'tok' is in document 'i'
+            }
+        }
+    }
+
     /*Step 2 */
     private int[][] generateSignatures() {
         initializeSigns();
@@ -88,7 +125,7 @@ public class LSH {
         int[] hashValues = new int[SIGN_LEN];
         int rowId = 0;
 
-        for (Set<Integer> rowOnes : matrix.values()) {
+        for (Set<Integer> rowOnes : (useTokens ? matrixTokens.values() : matrix.values())) {
             for (int i = 0; i < SIGN_LEN; i++) {
                 hashValues[i] = hashInt(rowId, hashParams[i]);
             }
@@ -163,8 +200,30 @@ public class LSH {
         output.close();
     }
 
+    private void saveMatrixTokens() throws IOException {
+        Path outputPath = new Path(outputDir, "matrix_tokens");
+        FSDataOutputStream out = fs.create(outputPath);
+        BufferedOutputStream output = new BufferedOutputStream(out);
+
+        StringBuilder str;
+        Set<Integer> set;
+
+        for (Map.Entry<Integer, Set<Integer>> pair : matrixTokens.entrySet()) {
+            set = pair.getValue();
+            str = new StringBuilder(Integer.toString(pair.getKey()) + '\t');
+            for (int i = 0; i < documentsCount; i++) {
+                str.append(set.contains(i) ? '1' : '.');
+            }
+            str.append('\n');
+            output.write(str.toString().getBytes());
+            output.flush();
+        }
+
+        output.close();
+    }
+
     private void saveSignatures() throws IOException {
-        Path outputPath = new Path(outputDir, "signatures");
+        Path outputPath = new Path(outputDir, (useTokens ? "signatures_tokens" : "signatures"));
         FSDataOutputStream out = fs.create(outputPath);
         BufferedOutputStream output = new BufferedOutputStream(out);
 
