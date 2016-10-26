@@ -6,6 +6,7 @@ echo "Usage: configure.sh master slaves"
 export HADOOP_PREFIX=~/java/standalone/hadoop-2.7.2
 export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
 export HADOOP_COMPILATION_CLASSPATH=`yarn classpath`
+unset _JAVA_OPTIONS
 
 sed -i -e "s|^export JAVA_HOME=\${JAVA_HOME}|export JAVA_HOME=$JAVA_HOME|g" ${HADOOP_PREFIX}/etc/hadoop/hadoop-env.sh
 # Setup yarn Heapsize
