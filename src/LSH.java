@@ -10,24 +10,24 @@ import java.util.*;
  * Created by mikib on 23.10.16.
  */
 public class LSH {
-    private final int bands = 5;
-    private final int rows = 20;
-    private final int SIGN_LEN = bands * rows;
-    private final int bucketsCnt = 1000000;
-    private final int documentsCount;
-    private boolean useTokens;
+    protected final int bands = 5;
+    protected final int rows = 20;
+    protected final int SIGN_LEN = bands * rows;
+    protected final int bucketsCnt = 1000000;
+    protected int documentsCount;
+    protected boolean useTokens;
 
-    private FileSystem fs;
-    private Configuration conf;
-    private Path[] files;
-    private Path outputDir;
+    protected FileSystem fs;
+    protected Configuration conf;
+    protected Path[] files;
+    protected Path outputDir;
 
     /* Succesive steps: */
-    private Map<String, Set<Integer>> matrix = new HashMap<>();
-    private Map<Integer, Set<Integer>> matrixTokens = new HashMap<>();
-    private int[][] signs;
-    private Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
-    private Set<Pair> candidatePairs = new HashSet<>();
+    protected Map<String, Set<Integer>> matrix = new HashMap<>();
+    protected Map<Integer, Set<Integer>> matrixTokens = new HashMap<>();
+    protected int[][] signs;
+    protected Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
+    protected Set<Pair> candidatePairs = new HashSet<>();
 
     LSH(Path outputDir, Path[] files, FileSystem fs, Configuration conf, boolean useTokens) {
         this.files = files;
@@ -77,7 +77,7 @@ public class LSH {
     }
 
     /* Step 1 */
-    private void createShinglesMatrix() throws IOException {
+    protected void createShinglesMatrix() throws IOException {
         ShinglesCount sc;
         Set<String> shingles;
 
@@ -98,7 +98,7 @@ public class LSH {
     }
 
     /* Step 1 - token version */
-    private void createTokensMatrix() throws IOException {
+    protected void createTokensMatrix() throws IOException {
         ShinglesCount sc;
         Set<Integer> tokens;
 

@@ -65,4 +65,8 @@ public class ShinglesCountCSV extends ShinglesCount {
         else
             return matrix.size();
     }
+
+    public int getLinesCount() {
+        return currDoc;
+    }
 }

@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by Mikołaj Błaż on 17.10.16.
+ * Created by Mikołaj Błaż on 27.10.16.
  */
 
-public class Similarity {
+public class SimilarityCSV {
     public static void main(String[] args) throws IOException {
         Path inputDir = new Path(args[0]);
         Path outputDir = new Path(args[1]);
@@ -23,19 +23,19 @@ public class Similarity {
         String[] filenames = new String[inputFiles.length];
 
         System.out.println("Files read:");
-        for (int i = 0; i < inputFiles.length; i++) {
+        for (int i = 0; i < 1; i++) {
             files[i] = inputFiles[i].getPath();
             filenames[i] = files[i].getName();
             System.out.println(filenames[i]);
         }
 
         System.out.println("\n\n############## Shingles version ###############");
-        printCandidates(new LSH(outputDir, files, fs, conf, false), filenames); // shingles
+        printCandidates(new LSHCSV(outputDir, files, fs, conf, false), filenames); // shingles
         System.out.println("\n\n############### Tokens version ###############");
-        printCandidates(new LSH(outputDir, files, fs, conf, true), filenames);  // tokens
+        printCandidates(new LSHCSV(outputDir, files, fs, conf, true), filenames);  // tokens
     }
 
-    public static void printCandidates(LSH lsh, String[] filenames) throws IOException {
+    public static void printCandidates(LSHCSV lsh, String[] filenames) throws IOException {
 
         Set<Pair> pairs = lsh.doLSH(true);
 
