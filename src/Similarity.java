@@ -1,4 +1,3 @@
-import javafx.util.Pair;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -30,11 +29,11 @@ public class Similarity {
         }
 
         LSH lsh = new LSH(files, fs, conf, outputDir);
-        Set<Pair<Integer, Integer>> pairs = lsh.doLSH(true);
+        Set<Pair> pairs = lsh.doLSH(true);
 
         System.out.println("Candidate pairs:");
-        for (Pair<Integer, Integer> p : pairs) {
-            System.out.println("(" + filenames[p.getKey()] + ", " + filenames[p.getValue()] + ")");
+        for (Pair p : pairs) {
+            System.out.println("(" + filenames[p.a] + ", " + filenames[p.b] + ")");
         }
         System.out.println("\nTotal: " + Integer.toString(pairs.size()));
     }

@@ -1,4 +1,3 @@
-import javafx.util.Pair;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -28,7 +27,7 @@ public class LSH {
     private Map<String, Set<Integer>> matrix = new HashMap<>();
     private int[][] signs;
     private Map<Integer, ArrayList<Integer>> buckets = new HashMap<>();
-    private Set<Pair<Integer, Integer>> candidatePairs = new HashSet<>();
+    private Set<Pair> candidatePairs = new HashSet<>();
 
     LSH(Path[] files, FileSystem fs, Configuration conf, Path outputDir) {
         this.files = files;
@@ -39,7 +38,7 @@ public class LSH {
         this.signs = new int[documentsCount][SIGN_LEN];
     }
 
-    public Set<Pair<Integer, Integer>> doLSH(boolean reset) throws IOException {
+    public Set<Pair> doLSH(boolean reset) throws IOException {
         System.out.println("Init");
         createShinglesMatrix();
         System.out.println("Shingles done");
@@ -75,7 +74,7 @@ public class LSH {
             shingles = sc.getShingles();
             for (String sh : shingles) {
                 if (!matrix.containsKey(sh))
-                    matrix.put(sh, new HashSet<>());
+                    matrix.put(sh, new HashSet<Integer>());
                 shSet = matrix.get(sh);
                 shSet.add(i);   // shingle 'sh' is in document 'i'
             }
@@ -111,7 +110,7 @@ public class LSH {
             for (int doc = 0; doc < documentsCount; doc++) {
                 bucket = hashBand(signs[doc], b * rows);
                 if (!buckets.containsKey(bucket))
-                    buckets.put(bucket, new ArrayList<>(1));
+                    buckets.put(bucket, new ArrayList<Integer>(1));
                 list = buckets.get(bucket);
                 list.add(doc);
             }
@@ -131,9 +130,9 @@ public class LSH {
                         m = b.get(j);
                         // add sorted
                         if (n < m)
-                            candidatePairs.add(new Pair<>(n, m));
+                            candidatePairs.add(new Pair(n, m));
                         else
-                            candidatePairs.add(new Pair<>(m, n));
+                            candidatePairs.add(new Pair(m, n));
                     }
                 }
             }
