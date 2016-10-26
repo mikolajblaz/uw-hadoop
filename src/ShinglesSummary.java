@@ -1,5 +1,6 @@
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
@@ -11,32 +12,33 @@ import java.io.*;
  */
 
 public class ShinglesSummary {
+    private static FileSystem fs;
+
     public static void main(String[] args) throws IOException {
-        Path filepath = new Path("/input/book1.txt");
-        if (args.length == 1)
-            filepath = new Path(args[0]);
+        Path inputDir = new Path(args[0]);
 
         Configuration conf = new Configuration();
-        FileSystem fs = FileSystem.get(conf);
+        fs = FileSystem.get(conf);
 
-        int count;
+        FileStatus[] inputFiles = fs.listStatus(inputDir);
+        Path inputPath;
 
-        System.out.println("Shingles\tno tokens\t2b tokens\t3b tokens \t4b tokens");
-        for (int sl = 2; sl < 11; sl++) {
-            System.out.print(Integer.toString(sl) + "\t\t");
-            for (int tl : new int[] {0, 2, 3, 4}) {
-                count = new ShinglesCount(sl, tl).countShingles(filepath, fs);
-                System.out.printf("%-16d", count);
-            }
-            System.out.println();
+        for (FileStatus f : inputFiles) {
+            inputPath = f.getPath();
+            System.out.println("\n\n\n########### " + inputPath.getName() + " ###########\n");
+            printShingles(inputPath, false);
+            printShingles(inputPath, true);
         }
+    }
 
-        System.out.println("\n\n############################\nASCII only:");
+    public static void printShingles(Path filepath, boolean onlyASCII) throws IOException {
+        if (onlyASCII)
+            System.out.println("\n\nASCII only:");
         System.out.println("Shingles\tno tokens\t2b tokens\t3b tokens \t4b tokens");
         for (int sl = 2; sl < 11; sl++) {
             System.out.print(Integer.toString(sl) + "\t\t");
             for (int tl : new int[] {0, 2, 3, 4}) {
-                count = new ShinglesCount(sl, tl, true).countShingles(filepath, fs);
+                int count = new ShinglesCount(sl, tl, onlyASCII).countShingles(filepath, fs);
                 System.out.printf("%-16d", count);
             }
             System.out.println();
