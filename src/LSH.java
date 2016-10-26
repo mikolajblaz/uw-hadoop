@@ -83,6 +83,7 @@ public class LSH {
 
     /*Step 2 */
     private int[][] generateSignatures() {
+        initializeSigns();
         final int[][] hashParams = generateHashParams();
         int[] hashValues = new int[SIGN_LEN];
         int rowId = 0;
@@ -152,7 +153,7 @@ public class LSH {
             set = pair.getValue();
             str = new StringBuilder(pair.getKey() + '\t');
             for (int i = 0; i < documentsCount; i++) {
-                str.append(set.contains(i) ? '1' : '0');
+                str.append(set.contains(i) ? '1' : '.');
             }
             str.append('\n');
             output.write(str.toString().getBytes());
@@ -180,6 +181,14 @@ public class LSH {
         }
 
         output.close();
+    }
+
+    private void initializeSigns() {
+        for (int i = 0; i < documentsCount; i++) {
+            for (int j = 0; j < SIGN_LEN; j++) {
+                signs[i][j] = Integer.MAX_VALUE;
+            }
+        }
     }
 
     private int[][] generateHashParams() {
