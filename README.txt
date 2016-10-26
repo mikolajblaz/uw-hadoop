@@ -1,8 +1,13 @@
 Autor: Mikołaj Błaż
+Album: 346862
 27.10.2016
 
 W katalogu 'scripts' znajdują się skrypty, w celu pełnego wystartowania hadoopa
 (łącznie z pobraniem) należy uruchomić skrypt 'run_all.sh' z argumentami 'master slaves'.
+Kopiowanie do HDFS - put_to_hdfs.sh
+Kompilacja i uruchomienie - compilenrun.sh
+
+
 
 Policzenie shingli w różnych plikach - klasa 'Summary' z folderem z plikami jako jednym argumentem, np.
 yarn jar Summary.jar Summary /input/books

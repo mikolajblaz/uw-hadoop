@@ -1,5 +1,5 @@
 #!/bin/bash
 
 ./download.sh
-./configure.sh
+./configure.sh $@
 ./start.sh
