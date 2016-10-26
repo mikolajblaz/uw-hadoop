@@ -1,13 +1,13 @@
 #!/bin/bash
 
-cd ${HADOOP_PREFIX}
-
 ### START
-bin/hdfs namenode -format
+${HADOOP_PREFIX}/bin/hdfs namenode -format
 
-sbin/start-dfs.sh
+${HADOOP_PREFIX}/sbin/start-dfs.sh
 
-bin/hdfs dfs -mkdir /user
-bin/hdfs dfs -mkdir /user/mb346862
+${HADOOP_PREFIX}/bin/hdfs dfs -mkdir /user
+${HADOOP_PREFIX}/bin/hdfs dfs -mkdir /user/mb346862
 
-sbin/start-yarn.sh
+${HADOOP_PREFIX}/sbin/start-yarn.sh
+
+./put_to_hdfs.sh ../input/*

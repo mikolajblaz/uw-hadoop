@@ -51,7 +51,7 @@ cat <<EOF > ${HADOOP_PREFIX}/etc/hadoop/yarn-site.xml
 EOF
 
 SLAVES_FILE=${HADOOP_PREFIX}/etc/hadoop/slaves
-touch $SLAVES_FILE
+echo -n "" > $SLAVES_FILE
 for s in $SLAVES
-  do echo s >> $SLAVES_FILE
+  do echo $s >> $SLAVES_FILE
 done
