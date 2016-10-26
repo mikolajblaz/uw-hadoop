@@ -14,14 +14,14 @@ import java.util.Set;
  */
 
 public class ShinglesCount {
-    private String lastLineEnd = null;
+    protected String lastLineEnd = null;
 
-    private final int shingleLength;
-    private final int tokenLength;
-    private boolean onlyASCII = true;
+    protected final int shingleLength;
+    protected final int tokenLength;
+    protected boolean onlyASCII = true;
 
-    private final int twoMask = 0x0000ffff;
-    private final int threeMask = 0x00ffffff;
+    protected final int twoMask = 0x0000ffff;
+    protected final int threeMask = 0x00ffffff;
 
     private Set<String> shingles = new HashSet<>();
     private Set<Integer> tokens = new HashSet<>();
@@ -88,20 +88,20 @@ public class ShinglesCount {
     }
 
     /** Print statistics. */
-    private void printStatistics() {
+    protected void printStatistics() {
         System.out.print("Total count:" + Integer.toString(shingles.size()));
         System.out.println("; shingles length: " + Integer.toString(shingleLength));
     }
 
     /** Print statistics. */
-    private void printTokenStatistics() {
+    protected void printTokenStatistics() {
         System.out.print("Total count:" + Integer.toString(tokens.size()));
         System.out.print("; shingles length: " + Integer.toString(shingleLength));
         System.out.println(", token length: " + Integer.toString(tokenLength));
     }
 
     /** Extract shingles and save unused characters from line end. */
-    private void extractShingles(String line) {
+    protected void extractShingles(String line) {
         final int lineLength = line.length();
         for (int i = 0; i < lineLength - shingleLength + 1; i++) {
             addShingle(line.substring(i, i + shingleLength));
@@ -113,7 +113,7 @@ public class ShinglesCount {
         }
     }
 
-    private void addShingle(String sh) {
+    protected void addShingle(String sh) {
         switch (tokenLength) {
             case 0: shingles.add(sh); break;
             case 2: tokens.add(sh.hashCode() & twoMask); break;

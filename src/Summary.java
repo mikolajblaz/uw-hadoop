@@ -11,7 +11,7 @@ import java.io.*;
  * Created by Mikołaj Błaż on 17.10.16.
  */
 
-public class ShinglesSummary {
+public class Summary {
     private static FileSystem fs;
 
     public static void main(String[] args) throws IOException {
