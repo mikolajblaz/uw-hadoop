@@ -41,7 +41,7 @@ public class SimilarityCSV {
 
         System.out.println("Candidate pairs:");
         for (Pair p : pairs) {
-            System.out.println("(document #" + Integer.toString(p.a) + ", document #" + Integer.toString(p.a) + ")");
+            System.out.println("(document #" + Integer.toString(p.a) + ", document #" + Integer.toString(p.b) + ")");
         }
         System.out.println("\nTotal pairs found: " + Integer.toString(pairs.size()));
     }
