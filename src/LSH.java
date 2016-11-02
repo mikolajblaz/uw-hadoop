@@ -10,8 +10,8 @@ import java.util.*;
  * Created by mikib on 23.10.16.
  */
 public class LSH {
-    protected final int bands = 5;
-    protected final int rows = 20;
+    protected final int bands = 10;
+    protected final int rows = 10;
     protected final int SIGN_LEN = bands * rows;
     protected final int bucketsCnt = 1000000;
     protected int documentsCount;
